@@ -9,11 +9,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "cheerio": "^1.0.0-rc.3",
     "dotenv": "^8.2.0",
     "got": "^10.0.4",
-    "html-to-json": "^0.6.0",
     "ml-regression-multivariate-linear": "^2.0.3",
-    "node-craigslist": "^2.1.0",
-    "node-html-parser": "^1.1.16"
+    "node-craigslist": "^2.1.0"
   }
 }
