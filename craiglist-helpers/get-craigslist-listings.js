@@ -3,6 +3,8 @@ const craigslist = require('node-craigslist')
 module.exports = getCraigslistListings
 
 let APARTMENT_CATEGORY = 'apa'
+// from the main craiglist site, you can get all the invidual craiglist sites 
+// then I need to map each one to an individual site
 async function getCraigslistListings (city) {
   let client = new craigslist.Client({
     baseHost: 'craigslist.org'
@@ -25,4 +27,4 @@ async function getCraigslistListings (city) {
 }
 
 
-getCraigslistListings('seattle')
+getCraigslistListings('ewing nj')

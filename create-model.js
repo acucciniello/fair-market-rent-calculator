@@ -1,16 +1,21 @@
 let MLR = require('ml-regression-multivariate-linear')
 
 /* format of data
- inputs: [ [# of bedrooms, # of bathrooms, sqft], [# of bedrooms, # of bathrooms, sqft] ]
+ trainingData: [ [# of bedrooms, # of bathrooms, sqft], [# of bedrooms, # of bathrooms, sqft] ]
  output: [ [price], [price] ]
 */
 
 module.exports = createModel
 
-function createModel(inputs) {
-  const mlr = new MLR(inputs.x, inputs.y)
+function createModel(trainingData) {
+  console.log(trainingData.x)
+  console.log(trainingData.y)
+  const mlr = new MLR(trainingData.x, trainingData.y)
+  console.log(mlr)
+  console.log(mlr.predict([2, 1, 1000]));
   return mlr
 }
+
 
 // let MLR = require('ml-regression-multivariate-linear')
 // // Bedrooms, Baths, SQ

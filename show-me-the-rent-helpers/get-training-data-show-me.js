@@ -5,7 +5,10 @@ const got = require('got')
 
 function getTrainingDataShowMe(listOfUrls) {
   return new Promise (async (resolve, reject) => {
-    let trainingData = []
+    let trainingData = {
+      x: [],
+      y: []
+    }
     for (let i = 0; i < listOfUrls.length; i++) {
       let url = `https://www.showmetherent.com/${listOfUrls[i]}`
       try {
@@ -14,6 +17,7 @@ function getTrainingDataShowMe(listOfUrls) {
         let rent = $('div[id="unit_list"]').find('div[class="unit-list-detail bedroom_apart "]').find('div[class="property-unit-header"]').find('h2').find('span[class=property-unit-rent]').text()
         rent = rent.replace(/\s/gmi,'')
         rent = rent.replace(/[$,]/gmi, '')
+        rent = parseInt(rent)
         console.log(rent)
         // pull out the details
         let details = $('div[id="unit_list"]').find('div[class="unit-list-detail bedroom_apart "]').find('div[class="bedroom_apart_cont"]').find('p[class="property-unit-details"]').text()
@@ -30,13 +34,13 @@ function getTrainingDataShowMe(listOfUrls) {
             let bedrooms = detailsArray[0]
             let bathrooms = detailsArray[1]
             let sqft = detailsArray[2]
+            bedrooms = parseInt(bedrooms)
+            bathrooms = parseInt(bathrooms)
+            sqft = parseInt(sqft)
             let x = [bedrooms, bathrooms, sqft]
             let y = [rent]
-            let oneSetOfData = {
-              x: x,
-              y: y
-            }
-            trainingData.push(oneSetOfData)
+            trainingData.x.push(x)
+            trainingData.y.push(y)
             // console.log(trainingData)
           }
         }
