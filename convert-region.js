@@ -3,6 +3,12 @@ const TO_ABBREVIATED = 2;
 
 module.exports = convertRegion
 
+/*
+  Purpose: to take a state and return its abbreivated form
+  param(in): input: state 
+  param(in): to: to determine to change it from long to abbreivated or vice versa
+  param(out): regions[i][0]: the abbreivated or long form state
+*/
 function convertRegion(input, to) {
     var states = [
         ['Alabama', 'AL'],

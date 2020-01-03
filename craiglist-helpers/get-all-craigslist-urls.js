@@ -14,5 +14,3 @@ async function getAllCraigslistUrls() {
     console.log(e)
   }
 }
-
-getAllCraigslistUrls()

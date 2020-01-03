@@ -1,0 +1,7 @@
+{
+  "lambda": {
+    "role": "fair-market-rent-calculator-executor",
+    "name": "fair-market-rent-calculator",
+    "region": "us-east-1"
+  }
+}

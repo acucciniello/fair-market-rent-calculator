@@ -1,26 +1,22 @@
 const got = require('got')
 const cheerio = require('cheerio')
-const convertRegion = require('../convert-region.js')
 const getTrainingDataTrulia = require('./get-training-data-trulia.js')
-
-const fs = require('fs')
-
-const TO_NAME = 1
-const TO_ABBREVIATED = 2
+const fixLocation = require('./fix-location.js')
 const RESULTS_PER_PAGE = 30
 
 module.exports = truliaSearch
 
+
+/*
+  Purpose: to go to trulia's site and get at maximum the first 6 pages of data for a town
+  param(in): town: the town we are getting data for
+  param(in): state: the state we are getting for the town from
+  param(out): truliaTrainingData: the data we will use to run machine learning on for rental predictions
+*/
 async function truliaSearch(town, state) {
   return new Promise(async(resolve, reject) => {
-    console.log('hi')
-    if (town.includes(' ')){
-      town = town.replace(/\s/gmi, '_')
-    }
-    if (state.length !== 2) {
-      stateAbbreviated = convertRegion(state, TO_ABBREVIATED)
-    }
-    let location = `${town},${stateAbbreviated}`
+    // format the town and state to fit trulias url form
+    let location = fixLocation(town, state)
     let url = `https://www.trulia.com/for_rent/${location}/APARTMENT,APARTMENT_COMMUNITY,APARTMENT%7CCONDO%7CTOWNHOUSE,CONDO,COOP,LOFT,SINGLE-FAMILY_HOME,TIC_type/`
     try {
       console.log(url)
@@ -42,7 +38,6 @@ async function truliaSearch(town, state) {
             urlsToHit.push(newUrl)
           }
           })
-        // THE TIMING IS OFF IN HERE, it takes the first pages URLS to hit then must wait till we get the rest of them before calling the inside f
         let totalResultsFull = $('div[id=__next]').find('section[id=main-content]')
                                 .find('div[class="SearchResultsContentLayout__Container-sc-15fhfe9-1 jQhwvb"]')
                                 .find('div[id="resultsColumn"]')
@@ -52,9 +47,14 @@ async function truliaSearch(town, state) {
                                 console.log(totalResultsFull)
         totalResultsFull = totalResultsFull.split(' ')
         console.log(totalResultsFull)
+        // if there are more than 1000 pages, limit it to the first 
+        let numResultsPages
         if (totalResultsFull[2]) {
-          let numResultsPages = Math.floor(totalResultsFull[2]/RESULTS_PER_PAGE)
-          console.log(numResultsPages)
+          if (totalResultsFull[2].includes(',')) {
+            numResultsPages = 5
+          } else {
+            numResultsPages = Math.floor(totalResultsFull[2]/RESULTS_PER_PAGE)
+          }
           for(let i = 0; i < numResultsPages; i++) {
             let nextPageUrl = `${url}${2+i}_p/`
             console.log(nextPageUrl)
@@ -76,30 +76,23 @@ async function truliaSearch(town, state) {
                   }
                   })
             } catch (err) {
-              console.log('we struggled to hit extra pages: ', index)
+              console.log('We failed to hit this trulia page: ', nextPageUrl)
               console.log(err)
               reject(err)
             }
           }
         }
         try {
-          console.log('urlsToHit')
-          console.log(urlsToHit)
           let truliaTrainingData = await getTrainingDataTrulia(urlsToHit)
-          console.log(truliaTrainingData)
           resolve(truliaTrainingData)
         } catch (individualPageError) {
           console.log(individualPageError)
           reject(individualPageError)
         }
     } catch(e) {
-      console.log('error')
-      console.log('in main function error')
+      console.log('error in trulia search function')
       console.log(e)
       reject(e)
     }
   })
-  
 }
-
-// truliaSearch('Ewing', 'New Jersey')

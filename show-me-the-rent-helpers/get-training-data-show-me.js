@@ -3,6 +3,11 @@ const fs = require('fs')
 const cheerio = require('cheerio')
 const got = require('got')
 
+/*
+  Purpose: to get the training data from show me the rents 
+  param(in): listOfUrls: the list of urls for the individual properties
+  param(out): trainingData: the data that will be used for trainging a model
+*/
 function getTrainingDataShowMe(listOfUrls) {
   return new Promise (async (resolve, reject) => {
     let trainingData = {
@@ -19,29 +24,29 @@ function getTrainingDataShowMe(listOfUrls) {
         rent = rent.replace(/[$,]/gmi, '')
         rent = parseInt(rent)
         console.log(rent)
-        // pull out the details
-        let details = $('div[id="unit_list"]').find('div[class="unit-list-detail bedroom_apart "]').find('div[class="bedroom_apart_cont"]').find('p[class="property-unit-details"]').text()
-        if (!details.includes('-')){
-          details = details.replace(/\s/gmi,'')
-          details = details.replace(/[,]/gmi,'')
-          details = details.replace(/(bedrooms|bedroom|bathrooms|bathroom|sq.ft.)/g,' ')
-          if (details.includes('studio')) {
-            details.replace('studio', '1 ')
-          }
-          let detailsArray = details.split(' ')
-          // console.log(detailsArray)
-          if (detailsArray[0] && detailsArray[1] && detailsArray[2]) {
-            let bedrooms = detailsArray[0]
-            let bathrooms = detailsArray[1]
-            let sqft = detailsArray[2]
-            bedrooms = parseInt(bedrooms)
-            bathrooms = parseInt(bathrooms)
-            sqft = parseInt(sqft)
-            let x = [bedrooms, bathrooms, sqft]
-            let y = [rent]
-            trainingData.x.push(x)
-            trainingData.y.push(y)
-            // console.log(trainingData)
+        if (rent <= 10000) {
+          // pull out the details
+          let details = $('div[id="unit_list"]').find('div[class="unit-list-detail bedroom_apart "]').find('div[class="bedroom_apart_cont"]').find('p[class="property-unit-details"]').text()
+          if (!details.includes('-')){
+            details = details.replace(/\s/gmi,'')
+            details = details.replace(/[,]/gmi,'')
+            details = details.replace(/(bedrooms|bedroom|bathrooms|bathroom|sq.ft.)/g,' ')
+            if (details.includes('studio')) {
+              details.replace('studio', '1 ')
+            }
+            let detailsArray = details.split(' ')
+            if (detailsArray[0] && detailsArray[1] && detailsArray[2]) {
+              let bedrooms = detailsArray[0]
+              let bathrooms = detailsArray[1]
+              let sqft = detailsArray[2]
+              bedrooms = parseInt(bedrooms)
+              bathrooms = parseFloat(bathrooms)
+              sqft = parseInt(sqft)
+              let x = [bedrooms, bathrooms, sqft]
+              let y = [rent]
+              trainingData.x.push(x)
+              trainingData.y.push(y)
+            }
           }
         }
       } catch (e) {

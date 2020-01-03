@@ -6,6 +6,11 @@ const getTrainingDataShowMe = require('./get-training-data-show-me')
 
 module.exports = getShowMeTheRentData
 
+/*
+  Purpose: to hit the search page for a zip code on show me the rent 
+  param(in): zipCode: the zipcode to search for
+  param(out): showMeTheRentTrainingData: the data to be used for predicting
+*/
 async function getShowMeTheRentData(zipCode) {
   return new Promise(async(resolve, reject) => {
     let url = `https://www.showmetherent.com/listings/${zipCode}`
