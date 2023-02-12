@@ -13,7 +13,7 @@
     "@sendgrid/mail": "^6.4.0",
     "cheerio": "^1.0.0-rc.3",
     "dotenv": "^8.2.0",
-    "got": "^10.0.4",
+    "got": "^12.5.3",
     "ml-regression-multivariate-linear": "^2.0.3",
     "node-craigslist": "^2.1.0"
   }
